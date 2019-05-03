@@ -7,17 +7,34 @@
     const SVG_NS = "http://www.w3.org/2000/svg";
     const CIRCLE_RADIUS = 200;
 
-    const COLORS = {
-        LION:  "rgb(99.2%, 72.2%, 13.7%)",
-        TIGER: "rgb(96.9%, 55.3%, 17.6%)",
-        WOLF:  "rgb(92.9%, 10.2%, 22.7%)",
-        BEAR:  "rgb(59.2%, 83.5%, 78.4%)",
-        SIGN:  "white",
+    const SPEEDS = {
+        FAST: 30,
+        NORMAL: 55,
+        SLOW: 100,
+        DEBUG: 500,
     };
+    const SPEED = SPEEDS.NORMAL;
 
-    const RANKS = Object.keys(COLORS);
-//    const NUM_SLICES = 4 * RANKS.length;
-    const NUM_SLICES = 18;
+    const COLOR_VALUES = {
+        lion:  "rgb(99.2%, 72.2%, 13.7%)",
+        tiger: "rgb(96.9%, 55.3%, 17.6%)",
+        wolf:  "rgb(92.9%, 10.2%, 22.7%)",
+        bear:  "rgb(59.2%, 83.5%, 78.4%)",
+        sign:  "white",
+    };
+    const COLORS = Object.keys(COLOR_VALUES);
+
+    const LIMBS = [
+        "right-hand",
+        "right-foot",
+        "left-foot",
+        "left-hand",
+    ];
+
+    // TODO: only want "sign" with "hand"
+    const NUM_SLICES = LIMBS.length * COLORS.length;
+    let currentLimb = 0;
+//    const NUM_SLICES = 18;
 
     let slices = []; // Array of wheel slice objects
     let isSpinning = false; // Is the arrow spinning?
@@ -27,16 +44,25 @@
     let spinnerDomEl; // DOM Object for the svg container
     let spinButtonDomEl; // DOM Object for the spin wheel <button>
 
-    let imgActionDomEl;
+    let imgColorDomEl;
+    let imgLimbDomEl;
 
     // Basic wheel "slice" object for drawing SVG
-    function Slice(num, parent) {
-        // Select the next rank in the cycle.
-        this.rank = RANKS[num % RANKS.length];
+    function Slice (num, parent) {
+        // Select the next color and limb in the cycle.
+        this.color = COLORS[num % COLORS.length];
+        this.limb  = LIMBS[currentLimb];
+        console.debug('slice number', num, 'assigned limb', this.limb);
+
+        // update limb if changing quadrants
+        if ((num + 1) % COLORS.length === 0) {
+            console.debug('increment limb after', this.color);
+            currentLimb++;
+        }
 
         // Set instance vars
         this.parent = parent;
-        this.id = "slice_" + this.rank + "_" + num;
+        this.id = "slice_" + this.color + "_" + this.limb;
 
         let size = 360/NUM_SLICES;
         let offset = num * size;
@@ -67,7 +93,7 @@
         slice.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS} ${CIRCLE_RADIUS} L ${x1} ${y1} A 180 180 0 0 1 ${x2} ${y2} Z`);
 
         // Randomize the color of the slice and finish styling
-        slice.setAttributeNS(null, "fill", COLORS[this.rank]);
+        slice.setAttributeNS(null, "fill", COLOR_VALUES[this.color]);
 
         // Add the slice to the group
         this.object.appendChild(slice);
@@ -105,8 +131,7 @@
         } else {
             // Start spinning the arrow
             isSpinning = true;
-//            toggleSpinning.spinInt = setInterval(spinWheel, 1000/60);
-            toggleSpinning.spinInt = setInterval(spinWheel, 55); // smaller is faster
+            toggleSpinning.spinInt = setInterval(spinWheel, SPEED);
             // Set how long the wheel will be spinning
             let duration = Math.floor(Math.random() * 2000) + 1000;
             setTimeout(toggleSpinning, duration);
@@ -124,8 +149,10 @@
         // Highlight the slice the arrow is above
         let newSlice = Math.floor(rotation / (360/NUM_SLICES));
         if (newSlice != currentSlice) {
+            console.debug('updating slice from', currentSlice, 'to', newSlice);
             slices[currentSlice].toggleOverlay();
-            imgActionDomEl.src = "../images/" + slices[newSlice].rank.toLowerCase() + ".png";
+            imgColorDomEl.src = "../images/" + slices[newSlice].color + ".png";
+            imgLimbDomEl.src = "../images/" + slices[newSlice].limb + ".png";
             slices[newSlice].toggleOverlay();
             currentSlice = newSlice;
         }
@@ -139,17 +166,11 @@
         spinButtonDomEl = document.getElementById("spinner-button"); // DOM Object for the spin wheel <button>
         spinnerDomEl = document.getElementById("spinner");
 
-        imgActionDomEl = document.getElementById("current-action");
+        imgColorDomEl = document.getElementById("current-color");
+        imgLimbDomEl = document.getElementById("current-limb");
 
         // resize SVG container to match specified spinner size
         spinnerDomEl.style.width = spinnerDomEl.style.height = CIRCLE_RADIUS * 2 + 'px';
-
-//        const circleSvgEl = document.createElementNS(SVG_NS, "circle");
-//        circleSvgEl.setAttributeNS(null, "data-name", "foo");
-//        circleSvgEl.setAttributeNS(null, "cx", CIRCLE_RADIUS);
-//        circleSvgEl.setAttributeNS(null, "cy", CIRCLE_RADIUS);
-//        circleSvgEl.setAttributeNS(null, "r", CIRCLE_RADIUS);
-//        spinnerDomEl.prepend(circleSvgEl);
 
         // center spinner peg
         const spinnerPegOuterSvgEl = document.getElementById("spinner-peg-outer");
@@ -163,15 +184,15 @@
         const spinnerArrowSvgEl = document.getElementById("spinner-arrow");
         spinnerArrowSvgEl.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS - 5} ${CIRCLE_RADIUS} l 0 -130 l -7 0 l 12 -15 l 12 15 l -7 0 l 0 130 Z`);
 
-//        drawBounding("spinner-arrow");
-
         // Generate the wheel sections
         for (let i = 0; i < NUM_SLICES; i++) {
-            slices[i] = new Slice(i, wheelDomEl);
+            slices[i] = new Slice (i, wheelDomEl);
         }
 
         // Highlight the first slice
         slices[0].toggleOverlay();
+        imgColorDomEl.src = "../images/" + slices[currentSlice].color + ".png";
+        imgLimbDomEl.src = "../images/" + slices[currentSlice].limb + ".png";
     }, false);
 
 //    function drawBounding (elementID)
