@@ -5,23 +5,23 @@
      */
 
     const SVG_NS = "http://www.w3.org/2000/svg";
-    const NUM_SLICES = 16;
-    const CIRCLE_RADIUS = 400;
+    const CIRCLE_RADIUS = 200;
 
-    const RGB = {
-        LION:  [ "99.2%", "72.2%", "13.7%" ],
-        TIGER: [ "96.9%", "55.3%", "17.6%" ],
-        WOLF:  [ "92.9%", "10.2%", "22.7%" ],
-        BEAR:  [ "59.2%", "83.5%", "78.4%" ],
+    const COLORS = {
+        LION:  "rgb(99.2%, 72.2%, 13.7%)",
+        TIGER: "rgb(96.9%, 55.3%, 17.6%)",
+        WOLF:  "rgb(92.9%, 10.2%, 22.7%)",
+        BEAR:  "rgb(59.2%, 83.5%, 78.4%)",
+        SIGN:  "white",
     };
 
-    const RANKS = Object.keys(RGB);
+    const RANKS = Object.keys(COLORS);
+    const NUM_SLICES = 4 * RANKS.length;
 
     let slices = []; // Array of wheel slice objects
     let isSpinning = false; // Is the arrow spinning?
     let rotation = 0; // Arrow rotation
     let currentSlice = 0; // Current slice the arrow is over
-    let wheelDomEl; // DOM Object for the spinner board
     let arrowDomEl; // DOM Object for the spinner arrow
     let spinnerDomEl; // DOM Object for the svg container
     let spinButtonDomEl; // DOM Object for the spin wheel <button>
@@ -64,7 +64,7 @@
         slice.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS} ${CIRCLE_RADIUS} L ${x1} ${y1} A 180 180 0 0 1 ${x2} ${y2} Z`);
 
         // Randomize the color of the slice and finish styling
-        slice.setAttributeNS(null, "fill", "rgb(" + RGB[this.rank][0] + "," + RGB[this.rank][1] + "," + RGB[this.rank][2] + ")");
+        slice.setAttributeNS(null, "fill", COLORS[this.rank]);
 
         // Add the slice to the group
         this.object.appendChild(slice);
@@ -72,7 +72,7 @@
         // Create the highlight for the slice
         let overlay = document.createElementNS(SVG_NS, "path");
         overlay.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS} ${CIRCLE_RADIUS} L ${x1} ${y1} A 180 180 0 0 1 ${x2} ${y2} Z`);
-        overlay.setAttributeNS(null, "fill", "#FFFFFF");
+        overlay.setAttributeNS(null, "class", "section-highlight");
         overlay.setAttributeNS(null, "opacity", "0");
 
         // Add the highlight for the slice to the group
@@ -83,7 +83,8 @@
     Slice.prototype = {
         toggleOverlay: function() {
             let overlay = this.object.childNodes[1];
-            if (overlay.getAttribute("opacity") === 0) {
+            console.log('overlay', overlay);
+            if (overlay.getAttribute("opacity") === "0") {
                 overlay.setAttributeNS(null, "opacity", "1");
             } else {
                 overlay.setAttributeNS(null, "opacity", "0");
@@ -99,8 +100,7 @@
             isSpinning = false;
             clearInterval(toggleSpinning.spinInt);
             spinButtonDomEl.removeAttribute("disabled");
-        }
-        else {
+        } else {
             // Start spinning the arrow
             isSpinning = true;
             toggleSpinning.spinInt = setInterval(spinWheel, 1000/60);
@@ -130,7 +130,7 @@
     // Document ready event
     document.addEventListener("DOMContentLoaded", () => {
         // Get a handle to all necessary DOM elements
-        wheelDomEl = document.getElementById("spinner-board"); // DOM Object for the spinner board
+        const wheelDomEl = document.getElementById("spinner-board"); // DOM Object for the spinner board
         arrowDomEl = document.getElementById("spinner-arrow"); // DOM Object for the spinner arrow
         spinButtonDomEl = document.getElementById("spinner-button"); // DOM Object for the spin wheel <button>
         spinnerDomEl = document.getElementById("spinner");
@@ -154,11 +154,10 @@
         spinnerPegInnerSvgEl.setAttributeNS(null, "cy", CIRCLE_RADIUS);
 
         // center arrow
-        // First, get the bounding box. This ignores all transformations.
-        const spinnerArrowBoundingBox = document.getElementById(elementID).getBBox();
-        // Now, transform so that the bottom center of the box is at
+        const spinnerArrowSvgEl = document.getElementById("spinner-arrow");
+        spinnerArrowSvgEl.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS - 5} ${CIRCLE_RADIUS} l 0 -130 l -7 0 l 12 -15 l 12 15 l -7 0 l 0 130 Z`);
 
-        drawBounding("spinner-arrow");
+//        drawBounding("spinner-arrow");
 
         // Generate the wheel sections
         for (let i = 0; i < NUM_SLICES; i++) {
@@ -169,17 +168,16 @@
         slices[0].toggleOverlay();
     }, false);
 
-    function drawBounding (elementID)
-    {
-        const spinnerArrowBoundingBox = document.getElementById(elementID).getBBox();
-        console.log('bbox', spinnerArrowBoundingBox);
-        const boundingBox = document.createElementNS(SVG_NS, "rect");
-        boundingBox.setAttributeNS(null, "x", spinnerArrowBoundingBox.x);
-        boundingBox.setAttributeNS(null, "y", spinnerArrowBoundingBox.y);
-        boundingBox.setAttributeNS(null, "width", spinnerArrowBoundingBox.width);
-        boundingBox.setAttributeNS(null, "height", spinnerArrowBoundingBox.height);
-        boundingBox.setAttributeNS(null, "fill-opacity", "0");
-        boundingBox.setAttributeNS(null, "stroke", "red");
-        spinnerDomEl.appendChild(boundingBox);
-    }
+//    function drawBounding (elementID)
+//    {
+//        const spinnerArrowBoundingBox = document.getElementById(elementID).getBBox();
+//        const boundingBox = document.createElementNS(SVG_NS, "rect");
+//        boundingBox.setAttributeNS(null, "x", spinnerArrowBoundingBox.x);
+//        boundingBox.setAttributeNS(null, "y", spinnerArrowBoundingBox.y);
+//        boundingBox.setAttributeNS(null, "width", spinnerArrowBoundingBox.width);
+//        boundingBox.setAttributeNS(null, "height", spinnerArrowBoundingBox.height);
+//        boundingBox.setAttributeNS(null, "fill-opacity", "0");
+//        boundingBox.setAttributeNS(null, "stroke", "red");
+//        spinnerDomEl.appendChild(boundingBox);
+//    }
 }
