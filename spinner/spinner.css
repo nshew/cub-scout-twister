@@ -1,0 +1,20 @@
+* {
+    font-family: Arial, sans-serif;
+}
+
+/*#wrapper {
+    width:      400px;
+    text-align: center;
+}*/
+
+#button-holder {
+    width:  200px;
+    margin: auto;
+}
+
+#spinner-button {
+    width:       200px;
+    height:      75px;
+    font-size:   1.25em;
+    font-weight: bold;
+}
