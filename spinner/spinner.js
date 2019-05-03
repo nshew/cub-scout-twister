@@ -16,7 +16,8 @@
     };
 
     const RANKS = Object.keys(COLORS);
-    const NUM_SLICES = 4 * RANKS.length;
+//    const NUM_SLICES = 4 * RANKS.length;
+    const NUM_SLICES = 18;
 
     let slices = []; // Array of wheel slice objects
     let isSpinning = false; // Is the arrow spinning?
@@ -25,6 +26,8 @@
     let arrowDomEl; // DOM Object for the spinner arrow
     let spinnerDomEl; // DOM Object for the svg container
     let spinButtonDomEl; // DOM Object for the spin wheel <button>
+
+    let imgActionDomEl;
 
     // Basic wheel "slice" object for drawing SVG
     function Slice(num, parent) {
@@ -83,7 +86,6 @@
     Slice.prototype = {
         toggleOverlay: function() {
             let overlay = this.object.childNodes[1];
-            console.log('overlay', overlay);
             if (overlay.getAttribute("opacity") === "0") {
                 overlay.setAttributeNS(null, "opacity", "1");
             } else {
@@ -103,7 +105,8 @@
         } else {
             // Start spinning the arrow
             isSpinning = true;
-            toggleSpinning.spinInt = setInterval(spinWheel, 1000/60);
+//            toggleSpinning.spinInt = setInterval(spinWheel, 1000/60);
+            toggleSpinning.spinInt = setInterval(spinWheel, 55); // smaller is faster
             // Set how long the wheel will be spinning
             let duration = Math.floor(Math.random() * 2000) + 1000;
             setTimeout(toggleSpinning, duration);
@@ -113,7 +116,7 @@
     }
 
     // Animation step for spinning the wheel arrow
-    function spinWheel() {
+    function spinWheel () {
         // Rotate the spinner arrow
         rotation = (rotation + 12) % 360;
         arrowDomEl.setAttributeNS(null, "transform", `rotate(${rotation},${CIRCLE_RADIUS},${CIRCLE_RADIUS})`);
@@ -122,6 +125,7 @@
         let newSlice = Math.floor(rotation / (360/NUM_SLICES));
         if (newSlice != currentSlice) {
             slices[currentSlice].toggleOverlay();
+            imgActionDomEl.src = "../images/" + slices[newSlice].rank.toLowerCase() + ".png";
             slices[newSlice].toggleOverlay();
             currentSlice = newSlice;
         }
@@ -134,6 +138,8 @@
         arrowDomEl = document.getElementById("spinner-arrow"); // DOM Object for the spinner arrow
         spinButtonDomEl = document.getElementById("spinner-button"); // DOM Object for the spin wheel <button>
         spinnerDomEl = document.getElementById("spinner");
+
+        imgActionDomEl = document.getElementById("current-action");
 
         // resize SVG container to match specified spinner size
         spinnerDomEl.style.width = spinnerDomEl.style.height = CIRCLE_RADIUS * 2 + 'px';
