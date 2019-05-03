@@ -1,4 +1,5 @@
 {
+    // TODO: click on section to change to it
     /**
      * The original spinner code comes from
      * https://gist.github.com/bencentra/5790501
@@ -9,7 +10,7 @@
 
     const SPEEDS = {
         FAST: 30,
-        NORMAL: 55,
+        NORMAL: 50,
         SLOW: 100,
         DEBUG: 500,
     };
@@ -109,16 +110,16 @@
 
         this.parent.appendChild(this.object);
     }
-    Slice.prototype = {
-        toggleOverlay: function() {
-            let overlay = this.object.childNodes[1];
-            if (overlay.getAttribute("opacity") === "0") {
-                overlay.setAttributeNS(null, "opacity", "1");
-            } else {
-                overlay.setAttributeNS(null, "opacity", "0");
-            }
-        }
-    };
+//    Slice.prototype = {
+//        toggleOverlay: function() {
+//            let overlay = this.object.childNodes[1];
+//            if (overlay.getAttribute("opacity") === "0") {
+//                overlay.setAttributeNS(null, "opacity", "1");
+//            } else {
+//                overlay.setAttributeNS(null, "opacity", "0");
+//            }
+//        }
+//    };
 
     // Toggle the spinning of the wheel
     function toggleSpinning() {
@@ -150,10 +151,10 @@
         let newSlice = Math.floor(rotation / (360/NUM_SLICES));
         if (newSlice != currentSlice) {
             console.debug('updating slice from', currentSlice, 'to', newSlice);
-            slices[currentSlice].toggleOverlay();
+//            slices[currentSlice].toggleOverlay();
             imgColorDomEl.src = "../images/" + slices[newSlice].color + ".png";
             imgLimbDomEl.src = "../images/" + slices[newSlice].limb + ".png";
-            slices[newSlice].toggleOverlay();
+//            slices[newSlice].toggleOverlay();
             currentSlice = newSlice;
         }
     }
@@ -190,7 +191,7 @@
         }
 
         // Highlight the first slice
-        slices[0].toggleOverlay();
+//        slices[0].toggleOverlay();
         imgColorDomEl.src = "../images/" + slices[currentSlice].color + ".png";
         imgLimbDomEl.src = "../images/" + slices[currentSlice].limb + ".png";
     }, false);

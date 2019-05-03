@@ -7,8 +7,8 @@
 </head>
 <body>
 
-  <div style="display: flex; justify-content: space-around;">
-    <div>
+  <main id="spinner-page">
+    <div id="spinner-wrapper">
       <svg id="spinner" xmlns="http://www.w3.org/2000/svg" version="1.1" stroke="#222222" style="width: 0; height: 0; stroke-width:2px;">
         <g id="spinner-board"></g>
         <path id="spinner-arrow" d="M 195 200 l 0 -130 l -7 0 l 12 -15 l 12 15 l -7 0 l 0 130 Z" fill="#EEEEEE"/>
@@ -22,10 +22,10 @@
     </div>
 
     <div id="current-selection">
-      <img id="current-color">
       <img id="current-limb">
+      <img id="current-color">
     </div>
-  </div>
+  </main>
 
 
   <script src="spinner.js"></script>

@@ -2,11 +2,6 @@
     font-family: Arial, sans-serif;
 }
 
-/*#wrapper {
-    width:      400px;
-    text-align: center;
-}*/
-
 #button-holder {
     width:  200px;
     margin: auto;
@@ -26,10 +21,23 @@
     stroke-width: 5px;
 }
 
+#spinner-page {
+    display: flex;
+    /*flex-direction: row;*/
+    justify-content: center;
+}
+#spinner-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
 #current-selection {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    align-items: center;
+    width: 300px;
 }
 #current-selection img {
     max-height: 200px;
