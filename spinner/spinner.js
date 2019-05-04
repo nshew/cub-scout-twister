@@ -1,6 +1,5 @@
 {
-    // TODO: click on section to change to it (manual override)
-    // TODO: bind button(s) to spend (space, enter, etc.)
+    // TODO: identify quadrants with limbs
     /**
      * The original spinner code comes from
      * https://gist.github.com/bencentra/5790501
@@ -107,9 +106,15 @@
         // Randomize the color of the slice and finish styling
         slice.setAttributeNS(null, "fill", COLOR_VALUES[this.action]);
 
+        // add click-to-select event to sections
+        slice.addEventListener("click", () => {
+            // TODO: move pointer
+            imgColorDomEl.src = "../images/" + this.action + ".png";
+            imgLimbDomEl.src = "../images/" + this.limb + ".png";
+        });
+
         // Add the slice to the group
         this.object.appendChild(slice);
-
         this.parent.appendChild(this.object);
     }
 
@@ -142,11 +147,8 @@
         // Highlight the slice the arrow is above
         let newSlice = Math.floor(rotation / (360/NUM_SLICES));
         if (newSlice != currentSlice) {
-            console.debug('updating slice from', currentSlice, 'to', newSlice);
-//            slices[currentSlice].toggleOverlay();
             imgColorDomEl.src = "../images/" + slices[newSlice].action + ".png";
             imgLimbDomEl.src = "../images/" + slices[newSlice].limb + ".png";
-//            slices[newSlice].toggleOverlay();
             currentSlice = newSlice;
         }
     }
@@ -191,5 +193,13 @@
 //        slices[0].toggleOverlay();
         imgColorDomEl.src = "../images/" + slices[currentSlice].action + ".png";
         imgLimbDomEl.src = "../images/" + slices[currentSlice].limb + ".png";
-    }, false);
+
+        // watch for key triggers
+        document.addEventListener("keyup", (event) => {
+            if (event.code === "Space" || event.code === "Enter") {
+                toggleSpinning();
+            }
+        });
+
+        }, false);
 }
