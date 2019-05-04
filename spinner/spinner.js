@@ -110,15 +110,6 @@
         // Add the slice to the group
         this.object.appendChild(slice);
 
-        // Create the highlight for the slice
-        let overlay = document.createElementNS(SVG_NS, "path");
-        overlay.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS} ${CIRCLE_RADIUS} L ${x1} ${y1} A 180 180 0 0 1 ${x2} ${y2} Z`);
-        overlay.setAttributeNS(null, "class", "section-highlight");
-        overlay.setAttributeNS(null, "opacity", "0");
-
-        // Add the highlight for the slice to the group
-        this.object.appendChild(overlay);
-
         this.parent.appendChild(this.object);
     }
 
@@ -189,8 +180,7 @@
         // Generate the wheel sections
         for (let i = 0; i < NUM_SLICES; i++) {
             try {
-                const newSlice = new Slice (i, wheelDomEl);
-                slices[i] = newSlice;
+                slices[i] = new Slice (i, wheelDomEl);
             } catch (e) {
                 console.error("Can't combine sign with feet!", i);
                 i--;
