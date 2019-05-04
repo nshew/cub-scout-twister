@@ -1,5 +1,6 @@
 {
-    // TODO: click on section to change to it
+    // TODO: click on section to change to it (manual override)
+    // TODO: bind button(s) to spend (space, enter, etc.)
     /**
      * The original spinner code comes from
      * https://gist.github.com/bencentra/5790501
@@ -14,7 +15,7 @@
         SLOW: 100,
         DEBUG: 500,
     };
-    const SPEED = SPEEDS.NORMAL;
+    const SPEED = SPEEDS.FAST;
 
     const COLOR_VALUES = {
         lion:  "rgb(99.2%, 72.2%, 13.7%)",
@@ -23,7 +24,7 @@
         bear:  "rgb(59.2%, 83.5%, 78.4%)",
         sign:  "white",
     };
-    const COLORS = Object.keys(COLOR_VALUES);
+    const ACTIONS = Object.keys(COLOR_VALUES);
 
     const LIMBS = [
         "right-hand",
@@ -32,10 +33,9 @@
         "left-hand",
     ];
 
-    // TODO: only want "sign" with "hand"
-    const NUM_SLICES = LIMBS.length * COLORS.length;
+    const NUM_SLICES = LIMBS.length * ACTIONS.length - 2;
     let currentLimb = 0;
-//    const NUM_SLICES = 18;
+    let actionOffset = 0;
 
     let slices = []; // Array of wheel slice objects
     let isSpinning = false; // Is the arrow spinning?
@@ -51,19 +51,30 @@
     // Basic wheel "slice" object for drawing SVG
     function Slice (num, parent) {
         // Select the next color and limb in the cycle.
-        this.color = COLORS[num % COLORS.length];
+        this.action = ACTIONS[(num + actionOffset) % ACTIONS.length];
         this.limb  = LIMBS[currentLimb];
-        console.debug('slice number', num, 'assigned limb', this.limb);
+        console.debug('slice number', num, 'assigned', this.action, 'on', this.limb);
 
-        // update limb if changing quadrants
-        if ((num + 1) % COLORS.length === 0) {
-            console.debug('increment limb after', this.color);
+        /*
+         * Limit the "sign" action to "hand" limbs. If we get that
+         * combo, we still need to increment currentLimb so that
+         * the section building can continue. Further, we have to
+         * note the offset for calculations of which action to use
+         * and when to increment the action (after the 4th or 5th).
+         */
+        if (this.action === "sign" &&
+            (this.limb === LIMBS[1] || this.limb === LIMBS[2])
+        ) {
+            currentLimb++;
+            actionOffset++;
+            throw new Error("Can't combine sign with feet!");
+        } else if ((num + 1 + actionOffset) % ACTIONS.length === 0) {
             currentLimb++;
         }
 
         // Set instance vars
         this.parent = parent;
-        this.id = "slice_" + this.color + "_" + this.limb;
+        this.id = "slice_" + this.action + "_" + this.limb;
 
         let size = 360/NUM_SLICES;
         let offset = num * size;
@@ -94,7 +105,7 @@
         slice.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS} ${CIRCLE_RADIUS} L ${x1} ${y1} A 180 180 0 0 1 ${x2} ${y2} Z`);
 
         // Randomize the color of the slice and finish styling
-        slice.setAttributeNS(null, "fill", COLOR_VALUES[this.color]);
+        slice.setAttributeNS(null, "fill", COLOR_VALUES[this.action]);
 
         // Add the slice to the group
         this.object.appendChild(slice);
@@ -110,16 +121,6 @@
 
         this.parent.appendChild(this.object);
     }
-//    Slice.prototype = {
-//        toggleOverlay: function() {
-//            let overlay = this.object.childNodes[1];
-//            if (overlay.getAttribute("opacity") === "0") {
-//                overlay.setAttributeNS(null, "opacity", "1");
-//            } else {
-//                overlay.setAttributeNS(null, "opacity", "0");
-//            }
-//        }
-//    };
 
     // Toggle the spinning of the wheel
     function toggleSpinning() {
@@ -152,7 +153,7 @@
         if (newSlice != currentSlice) {
             console.debug('updating slice from', currentSlice, 'to', newSlice);
 //            slices[currentSlice].toggleOverlay();
-            imgColorDomEl.src = "../images/" + slices[newSlice].color + ".png";
+            imgColorDomEl.src = "../images/" + slices[newSlice].action + ".png";
             imgLimbDomEl.src = "../images/" + slices[newSlice].limb + ".png";
 //            slices[newSlice].toggleOverlay();
             currentSlice = newSlice;
@@ -187,25 +188,18 @@
 
         // Generate the wheel sections
         for (let i = 0; i < NUM_SLICES; i++) {
-            slices[i] = new Slice (i, wheelDomEl);
+            try {
+                const newSlice = new Slice (i, wheelDomEl);
+                slices[i] = newSlice;
+            } catch (e) {
+                console.error("Can't combine sign with feet!", i);
+                i--;
+            }
         }
 
         // Highlight the first slice
 //        slices[0].toggleOverlay();
-        imgColorDomEl.src = "../images/" + slices[currentSlice].color + ".png";
+        imgColorDomEl.src = "../images/" + slices[currentSlice].action + ".png";
         imgLimbDomEl.src = "../images/" + slices[currentSlice].limb + ".png";
     }, false);
-
-//    function drawBounding (elementID)
-//    {
-//        const spinnerArrowBoundingBox = document.getElementById(elementID).getBBox();
-//        const boundingBox = document.createElementNS(SVG_NS, "rect");
-//        boundingBox.setAttributeNS(null, "x", spinnerArrowBoundingBox.x);
-//        boundingBox.setAttributeNS(null, "y", spinnerArrowBoundingBox.y);
-//        boundingBox.setAttributeNS(null, "width", spinnerArrowBoundingBox.width);
-//        boundingBox.setAttributeNS(null, "height", spinnerArrowBoundingBox.height);
-//        boundingBox.setAttributeNS(null, "fill-opacity", "0");
-//        boundingBox.setAttributeNS(null, "stroke", "red");
-//        spinnerDomEl.appendChild(boundingBox);
-//    }
 }
