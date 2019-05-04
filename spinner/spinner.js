@@ -17,11 +17,12 @@
     const SPEED = SPEEDS.FAST;
 
     const COLOR_VALUES = {
-        lion:  "rgb(99.2%, 72.2%, 13.7%)",
-        tiger: "rgb(96.9%, 55.3%, 17.6%)",
-        wolf:  "rgb(92.9%, 10.2%, 22.7%)",
-        bear:  "rgb(59.2%, 83.5%, 78.4%)",
-        sign:  "white",
+        lion:    "rgb(99.2%, 72.2%, 13.7%)",
+        tiger:   "rgb(96.9%, 55.3%, 17.6%)",
+        wolf:    "rgb(92.9%, 10.2%, 22.7%)",
+        bear:    "rgb(59.2%, 83.5%, 78.4%)",
+        webelos: "rgb(0%, 23.9%, 44.3%)",
+        sign:    "white",
     };
     const ACTIONS = Object.keys(COLOR_VALUES);
 

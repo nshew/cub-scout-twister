@@ -11,14 +11,12 @@
     <div id="spinner-wrapper">
       <svg id="spinner" xmlns="http://www.w3.org/2000/svg" version="1.1" stroke="#222222" style="width: 0; height: 0; stroke-width:2px;">
         <g id="spinner-board"></g>
-        <path id="spinner-arrow" d="M 195 200 l 0 -130 l -7 0 l 12 -15 l 12 15 l -7 0 l 0 130 Z" fill="#EEEEEE"/>
-        <circle id="spinner-peg-outer" cx="200" cy="200" r="18" fill="#444444"/>
-        <circle id="spinner-peg-inner" cx="200" cy="200" r="9"  fill="#666666"/>
+        <path id="spinner-arrow" d="M 195 200 l 0 -130 l -7 0 l 12 -15 l 12 15 l -7 0 l 0 130 Z" fill="#222"/>
+        <circle id="spinner-peg-outer" cx="200" cy="200" r="18" fill="#444"/>
+        <circle id="spinner-peg-inner" cx="200" cy="200" r="9"  fill="#666"/>
       </svg>
 
-      <div id="button-holder">
-        <button id="spinner-button" onclick="toggleSpinning();">Start the Spinner!</button>
-      </div>
+      <button id="spinner-button" onclick="toggleSpinning();">Spin!</button>
     </div>
 
     <div id="current-selection">
