@@ -102,6 +102,7 @@
          *  A - draw minor arc
          *  Z - close the path (return to center)
          */
+        // TODO: extend lines from radius on quadrant boundaries
         slice.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS} ${CIRCLE_RADIUS} L ${x1} ${y1} A 180 180 0 0 1 ${x2} ${y2} Z`);
 
         // Randomize the color of the slice and finish styling
