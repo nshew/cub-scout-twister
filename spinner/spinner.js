@@ -6,6 +6,7 @@
      */
 
     const SVG_NS = "http://www.w3.org/2000/svg";
+    const CIRCLE_CENTER = 200;
     const CIRCLE_RADIUS = 200;
 
     const SPEEDS = {
@@ -79,10 +80,10 @@
         let size = 360/NUM_SLICES;
         let offset = num * size;
 
-        let x1 = Math.floor(CIRCLE_RADIUS + 180 * Math.cos(Math.PI * (-90 + offset       )/180));
-        let y1 = Math.floor(CIRCLE_RADIUS + 180 * Math.sin(Math.PI * (-90 + offset       )/180));
-        let x2 = Math.floor(CIRCLE_RADIUS + 180 * Math.cos(Math.PI * (-90 + offset + size)/180));
-        let y2 = Math.floor(CIRCLE_RADIUS + 180 * Math.sin(Math.PI * (-90 + offset + size)/180));
+        let x1 = Math.floor(CIRCLE_CENTER + 180 * Math.cos(Math.PI * (-90 + offset       )/180));
+        let y1 = Math.floor(CIRCLE_CENTER + 180 * Math.sin(Math.PI * (-90 + offset       )/180));
+        let x2 = Math.floor(CIRCLE_CENTER + 180 * Math.cos(Math.PI * (-90 + offset + size)/180));
+        let y2 = Math.floor(CIRCLE_CENTER + 180 * Math.sin(Math.PI * (-90 + offset + size)/180));
 
         //
         // Draw the object
@@ -103,7 +104,7 @@
          *  Z - close the path (return to center)
          */
         // TODO: extend lines from radius on quadrant boundaries
-        slice.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS} ${CIRCLE_RADIUS} L ${x1} ${y1} A 180 180 0 0 1 ${x2} ${y2} Z`);
+        slice.setAttributeNS(null, "d", `M ${CIRCLE_CENTER} ${CIRCLE_CENTER} L ${x1} ${y1} A 180 180 0 0 1 ${x2} ${y2} Z`);
 
         // Randomize the color of the slice and finish styling
         slice.setAttributeNS(null, "fill", COLOR_VALUES[this.action]);
@@ -144,7 +145,7 @@
     function spinWheel () {
         // Rotate the spinner arrow
         rotation = (rotation + 12) % 360;
-        arrowDomEl.setAttributeNS(null, "transform", `rotate(${rotation},${CIRCLE_RADIUS},${CIRCLE_RADIUS})`);
+        arrowDomEl.setAttributeNS(null, "transform", `rotate(${rotation},${CIRCLE_CENTER},${CIRCLE_CENTER})`);
 
         // Highlight the slice the arrow is above
         let newSlice = Math.floor(rotation / (360/NUM_SLICES));
@@ -171,15 +172,15 @@
 
         // center spinner peg
         const spinnerPegOuterSvgEl = document.getElementById("spinner-peg-outer");
-        spinnerPegOuterSvgEl.setAttributeNS(null, "cx", CIRCLE_RADIUS);
-        spinnerPegOuterSvgEl.setAttributeNS(null, "cy", CIRCLE_RADIUS);
+        spinnerPegOuterSvgEl.setAttributeNS(null, "cx", CIRCLE_CENTER);
+        spinnerPegOuterSvgEl.setAttributeNS(null, "cy", CIRCLE_CENTER);
         const spinnerPegInnerSvgEl = document.getElementById("spinner-peg-inner");
-        spinnerPegInnerSvgEl.setAttributeNS(null, "cx", CIRCLE_RADIUS);
-        spinnerPegInnerSvgEl.setAttributeNS(null, "cy", CIRCLE_RADIUS);
+        spinnerPegInnerSvgEl.setAttributeNS(null, "cx", CIRCLE_CENTER);
+        spinnerPegInnerSvgEl.setAttributeNS(null, "cy", CIRCLE_CENTER);
 
         // center arrow
         const spinnerArrowSvgEl = document.getElementById("spinner-arrow");
-        spinnerArrowSvgEl.setAttributeNS(null, "d", `M ${CIRCLE_RADIUS - 5} ${CIRCLE_RADIUS} l 0 -130 l -7 0 l 12 -15 l 12 15 l -7 0 l 0 130 Z`);
+        spinnerArrowSvgEl.setAttributeNS(null, "d", `M ${CIRCLE_CENTER - 5} ${CIRCLE_CENTER} l 0 -130 l -7 0 l 12 -15 l 12 15 l -7 0 l 0 130 Z`);
 
         // Generate the wheel sections
         for (let i = 0; i < NUM_SLICES; i++) {
