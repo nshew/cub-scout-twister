@@ -4,7 +4,7 @@ a Cub Scout-themed Twister game
 ## Use
 The spinner is a static HTML asset. Simply open the `spinner/spinner.html` file in your browser.
 
-![spinner](./cstwister.png)
+![spinner](./cstwister-spinner.gif)
 
 
 ## Mat assembly
